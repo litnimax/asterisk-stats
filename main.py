@@ -1,12 +1,17 @@
 import asyncio
 import inspect
 import logging
+import os
 import sys
 from panoramisk import Manager
 from prometheus_client import CollectorRegistry, Gauge, push_to_gateway
 
 # Pometheus push gateway
-PUSHGATEWAY = 'localhost:9091'
+PUSH_GATEWAY = os.environ.get('PUSH_GATEWAY', 'localhost:9091')
+AMI_HOST = os.environ.get('AMI_HOST', 'localhost')
+AMI_PORT = os.environ.get('AMI_PORT', '5038')
+AMI_USER = os.environ.get('AMI_USER', 'asterisk')
+AMI_SECRET = os.environ.get('AMI_SECRET', 'secret')
 
 registry = CollectorRegistry()
 uptime = Gauge('asterisk_uptime', 'Asterisk time since start', registry=registry)
@@ -19,9 +24,9 @@ channels = Gauge('asterisk_channels_total', 'Asterisk Active Channels',
 
 # Asterisk AMI manager client
 manager = Manager(loop=asyncio.get_event_loop(),
-                  host='localhost',
-                  username='odoo',
-                  secret='odoo')
+                  host=AMI_HOST, port=AMI_PORT,
+                  username=AMI_USER,
+                  secret=AMI_SECRET)
 #manager.loop.set_debug(True)
 
 logging.basicConfig()
@@ -47,10 +52,10 @@ def on_asterisk_FullyBooted(manager, message):
     sip_calls = len(list(filter(lambda x: x.Channel.startswith('SIP/'), calls)))
     iax2_calls = len(list(filter(lambda x: x.Channel.startswith('IAX2/'), calls)))
     dahdi_calls = len(list(filter(lambda x: x.Channel.startswith('DAHDI/'), calls)))
-    channels.labels(channel='sip').set(sip_calls)
-    channels.labels(channel='iax2').set(iax2_calls)
-    channels.labels(channel='dahdi').set(dahdi_calls)
-    push_to_gateway(PUSHGATEWAY, job='asterisk', registry=registry)
+    sip_calls and channels.labels(channel='sip').set(sip_calls)
+    iax2_calls and channels.labels(channel='iax2').set(iax2_calls)
+    dahdi_calls and channels.labels(channel='dahdi').set(dahdi_calls)
+    push_to_gateway(PUSH_GATEWAY, job='asterisk', registry=registry)
 
 
 @manager.register_event('Newchannel')
@@ -62,7 +67,7 @@ def on_asterisk_Newchannel(manager, message):
              #context=m.Context,
              #exten=m.Exten
              ).inc()
-    push_to_gateway(PUSHGATEWAY, job='asterisk', registry=registry)
+    push_to_gateway(PUSH_GATEWAY, job='asterisk', registry=registry)
 
 
 @manager.register_event('Hangup')
@@ -76,7 +81,7 @@ def on_asterisk_Hangup(manager, message):
              #cause_txt=m.get('Cause-txt'),
              #exten=m.Exten
              ).dec()
-    push_to_gateway(PUSHGATEWAY, job='asterisk', registry=registry)
+    push_to_gateway(PUSH_GATEWAY, job='asterisk', registry=registry)
 
 
 def on_asterisk_DialBegin(manager, message):
