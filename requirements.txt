@@ -1,2 +1,2 @@
 panoramisk
-prometheus_client
+statsd-tags

@@ -4,23 +4,16 @@ import logging
 import os
 import sys
 from panoramisk import Manager
-from prometheus_client import CollectorRegistry, Gauge, push_to_gateway
+import statsd
 
 # Pometheus push gateway
-PUSH_GATEWAY = os.environ.get('PUSH_GATEWAY', 'localhost:9091')
+STATSD_HOST = os.environ.get('STATSD_HOST', 'localhost:9125')
 AMI_HOST = os.environ.get('AMI_HOST', 'localhost')
 AMI_PORT = os.environ.get('AMI_PORT', '5038')
 AMI_USER = os.environ.get('AMI_USER', 'asterisk')
 AMI_SECRET = os.environ.get('AMI_SECRET', 'secret')
 
-registry = CollectorRegistry()
-uptime = Gauge('asterisk_uptime', 'Asterisk time since start', registry=registry)
-last_reload = Gauge('asterisk_last_reload', 'Asterisk last reload', registry=registry)
-#channels = Gauge('asterisk_channels_total', 'Asterisk Active Channels',
-#                ['channel', 'calleridname','context','cause','cause_txt','exten'],
-#                registry=registry)
-channels = Gauge('asterisk_channels_total', 'Asterisk Active Channels',
-                ['channel'], registry=registry)
+stats = statsd.StatsClient(*STATSD_HOST.split(':'))
 
 # Asterisk AMI manager client
 manager = Manager(loop=asyncio.get_event_loop(),
@@ -33,6 +26,8 @@ logging.basicConfig()
 logger = logging.getLogger(__name__)
 logger.setLevel(level=logging.DEBUG)
 
+channels_current = {} # Current channels counter
+
 
 def main():
     manager.connect()
@@ -44,44 +39,51 @@ def main():
 
 @manager.register_event('FullyBooted')
 def on_asterisk_FullyBooted(manager, message):
-    uptime.set(message.Uptime)
-    last_reload.set(message.LastReload)
+    if message.Uptime:
+        stats.gauge('asterisk_uptime', int(message.Uptime))
+    if message.LastReload:
+        stats.gauge('asterisk_last_reload', int(message.LastReload))
     # Get initial channels
     ShowChannels = yield from manager.send_action({'Action': 'CoreShowChannels'})
-    calls = list(filter(lambda x: x.Event == 'CoreShowChannel', ShowChannels))
-    sip_calls = len(list(filter(lambda x: x.Channel.startswith('SIP/'), calls)))
-    iax2_calls = len(list(filter(lambda x: x.Channel.startswith('IAX2/'), calls)))
-    dahdi_calls = len(list(filter(lambda x: x.Channel.startswith('DAHDI/'), calls)))
-    sip_calls and channels.labels(channel='sip').set(sip_calls)
-    iax2_calls and channels.labels(channel='iax2').set(iax2_calls)
-    dahdi_calls and channels.labels(channel='dahdi').set(dahdi_calls)
-    push_to_gateway(PUSH_GATEWAY, job='asterisk', registry=registry)
+    channels = list(filter(lambda x: x.Event == 'CoreShowChannel', ShowChannels))
+    sip_channels = len(list(filter(lambda x: x.Channel.startswith('SIP/'), channels)))
+    iax2_channels = len(list(filter(lambda x: x.Channel.startswith('IAX2/'), channels)))
+    dahdi_channels = len(list(filter(lambda x: x.Channel.startswith('DAHDI/'), channels)))
+    local_channels = len(list(filter(lambda x: x.Channel.startswith('Local/'), channels)))
+    channels_current['sip'] = sip_channels
+    channels_current['iax2'] = iax2_channels
+    channels_current['dahdi'] = dahdi_channels
+    channels_current['local'] = local_channels
+    sip_channels and stats.gauge('asterisk_channels_current', sip_channels, tags={'channel':'sip'})
+    iax2_channels and stats.gauge('asterisk_channels_current', iax2_channels, tags={'channel':'iax2'})
+    sip_channels and stats.gauge('asterisk_channels_current', sip_channels, tags={'channel':'sip'})
 
 
 @manager.register_event('Newchannel')
 def on_asterisk_Newchannel(manager, message):
     m = message
-    channels.labels(channel=m.Channel.split('/')[0].lower(),
-             #calleridnum=m.CallerIDNum,
-             #calleridname=m.CallerIDName,
-             #context=m.Context,
-             #exten=m.Exten
-             ).inc()
-    push_to_gateway(PUSH_GATEWAY, job='asterisk', registry=registry)
+    channel=m.Channel.split('/')[0].lower()
+    stats.incr('asterisk_channels_total', tags={'channel': channel})
+    if channels_current.get(channel):
+        channels_current[channel] += 1
+    else:
+        channels_current[channel] = 0
+    logger.debug('New channel {}, current: {}'.format(channel, channels_current[channel]))
+    stats.gauge('asterisk_channels_current', channels_current[channel],
+                tags={'channel':channel})
 
 
 @manager.register_event('Hangup')
 def on_asterisk_Hangup(manager, message):
     m = message
-    channels.labels(channel=m.Channel.split('/')[0].lower(),
-             #calleridnum=m.CallerIDNum,
-             #alleridname=m.CallerIDName,
-             #context=m.Context,
-             #cause=m.Cause,
-             #cause_txt=m.get('Cause-txt'),
-             #exten=m.Exten
-             ).dec()
-    push_to_gateway(PUSH_GATEWAY, job='asterisk', registry=registry)
+    channel=m.Channel.split('/')[0].lower()
+    if channels_current.get(channel):
+        channels_current[channel] -= 1
+    else:
+        channels_current[channel] = 0
+    logger.debug('Channel {} hangup, current: {}'.format(channel, channels_current[channel]))
+    stats.gauge('asterisk_channels_current', channels_current[channel],
+                tags={'channel':channel})
 
 
 def on_asterisk_DialBegin(manager, message):
