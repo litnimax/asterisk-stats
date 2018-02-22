@@ -1,0 +1,74 @@
+version: '3'
+
+networks:
+  monitor-net:
+    driver: bridge
+
+volumes:
+    prometheus_data: {}
+    grafana_data: {}
+
+services:
+
+  prometheus:
+    image: prom/prometheus:v2.1.0
+    container_name: prometheus
+    volumes:
+      - ./prometheus/:/etc/prometheus/
+      - prometheus_data:/prometheus
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+      - '--storage.tsdb.path=/prometheus'
+      - '--web.console.libraries=/etc/prometheus/console_libraries'
+      - '--web.console.templates=/etc/prometheus/consoles'
+      - '--storage.tsdb.retention=200h'
+      - '--web.enable-lifecycle'
+    restart: unless-stopped
+    expose:
+      - 9090
+    networks:
+      - monitor-net
+    labels:
+      org.label-schema.group: "monitoring"
+
+  alertmanager:
+    image: prom/alertmanager:v0.13.0
+    container_name: alertmanager
+    volumes:
+      - ./alertmanager/:/etc/alertmanager/
+    command:
+      - '--config.file=/etc/alertmanager/config.yml'
+      - '--storage.path=/alertmanager'
+    restart: unless-stopped
+    expose:
+      - 9093
+    networks:
+      - monitor-net
+    labels:
+      org.label-schema.group: "monitoring"
+
+
+  statsd_exporter:
+    container_name: statsd_exporter
+    image: prom/statsd-exporter
+    expose:
+      # web port for prometheus
+      - 9102
+    ports:
+      - "49125:9125"
+      - "49125:9125/udp"
+    networks:
+      - monitor-net
+
+  asterisk_stats:
+    container_name: asterisk_stats
+    build: .
+    restart: unless-stopped
+    environment:
+      - AMI_USER=${AMI_USER}
+      - AMI_SECRET=${AMI_SECRET}
+      - AMI_HOST=${AMI_HOST}
+      - AMI_PORT=${AMI_PORT}
+      - STATSD_HOST=statsd_exporter:49125
+    networks:
+      - monitor-net

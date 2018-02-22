@@ -1,0 +1,13 @@
+version: '3'
+services:
+  prometheus:
+    ports:
+      - 127.0.0.1:49090:9090
+
+  alertmanager:
+    ports:
+      - 127.0.0.1:49093:9093
+
+  statsd_exporter:
+    ports:
+      - 127.0.0.1:49102:9102

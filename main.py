@@ -30,6 +30,7 @@ channels_current = {} # Current channels counter
 
 
 def main():
+    logger.info('Connecting to {}:{}.'.format(AMI_HOST, AMI_PORT))
     manager.connect()
     try:
         manager.loop.run_forever()
