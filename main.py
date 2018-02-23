@@ -48,16 +48,18 @@ def on_asterisk_FullyBooted(manager, message):
     ShowChannels = yield from manager.send_action({'Action': 'CoreShowChannels'})
     channels = list(filter(lambda x: x.Event == 'CoreShowChannel', ShowChannels))
     sip_channels = len(list(filter(lambda x: x.Channel.startswith('SIP/'), channels)))
+    pjsip_channels = len(list(filter(lambda x: x.Channel.startswith('PJSIP/'), channels)))
     iax2_channels = len(list(filter(lambda x: x.Channel.startswith('IAX2/'), channels)))
     dahdi_channels = len(list(filter(lambda x: x.Channel.startswith('DAHDI/'), channels)))
     local_channels = len(list(filter(lambda x: x.Channel.startswith('Local/'), channels)))
     channels_current['sip'] = sip_channels
+    channels_current['pjsip'] = pjsip_channels
     channels_current['iax2'] = iax2_channels
     channels_current['dahdi'] = dahdi_channels
     channels_current['local'] = local_channels
     sip_channels and stats.gauge('asterisk_channels_current', sip_channels, tags={'channel':'sip'})
+    pjsip_channels and stats.gauge('asterisk_channels_current', pjsip_channels, tags={'channel':'pjsip'})
     iax2_channels and stats.gauge('asterisk_channels_current', iax2_channels, tags={'channel':'iax2'})
-    sip_channels and stats.gauge('asterisk_channels_current', sip_channels, tags={'channel':'sip'})
 
 
 @manager.register_event('Newchannel')
