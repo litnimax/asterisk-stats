@@ -60,7 +60,7 @@ services:
     networks:
       - monitor-net
 
-  asterisk_stats:
+  as:
     container_name: asterisk_stats
     build: .
     restart: unless-stopped
