@@ -15,8 +15,10 @@ AMI_SECRET = os.environ.get('AMI_SECRET', 'secret')
 
 stats = statsd.StatsClient(*STATSD_HOST.split(':'))
 
+loop = asyncio.get_event_loop()
+
 # Asterisk AMI manager client
-manager = Manager(loop=asyncio.get_event_loop(),
+manager = Manager(loop=loop,
                   host=AMI_HOST, port=AMI_PORT,
                   username=AMI_USER,
                   secret=AMI_SECRET)
@@ -33,9 +35,9 @@ def main():
     logger.info('Connecting to {}:{}.'.format(AMI_HOST, AMI_PORT))
     manager.connect()
     try:
-        manager.loop.run_forever()
+        loop.run_forever()
     except KeyboardInterrupt:
-        manager.loop.close()
+        loop.close()
 
 
 @manager.register_event('FullyBooted')
