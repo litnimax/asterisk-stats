@@ -69,6 +69,6 @@ services:
       - AMI_SECRET=${AMI_SECRET}
       - AMI_HOST=${AMI_HOST}
       - AMI_PORT=${AMI_PORT}
-      - STATSD_HOST=statsd_exporter:49125
+      - STATSD_HOST=statsd_exporter:9125
     networks:
       - monitor-net
