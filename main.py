@@ -82,8 +82,8 @@ def on_asterisk_Newchannel(manager, message):
 def on_asterisk_Hangup(manager, message):
     m = message
     channel=m.Channel.split('/')[0].lower()
-    if channels_current.get(channel):
-        channels_current[channel] != None:
+    if channels_current.get(channel) != None:
+        channels_current[channel] -= 1
     else:
         channels_current[channel] = 0
     logger.debug('Channel {} hangup, current: {}'.format(channel, channels_current[channel]))
