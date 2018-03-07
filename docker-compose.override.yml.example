@@ -2,7 +2,7 @@ version: '3'
 services:
   prometheus:
     ports:
-      - 127.0.0.1:49090:9090
+      - 49090:9090
 
   alertmanager:
     ports:
@@ -15,3 +15,7 @@ services:
   as:
     volumes:
       - ./main.py:/app/main.py
+
+  grafana:
+    ports:
+      - 3000:3000

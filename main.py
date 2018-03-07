@@ -28,7 +28,8 @@ logging.basicConfig()
 logger = logging.getLogger(__name__)
 logger.setLevel(level=logging.DEBUG)
 
-channels_current = {} # Current channels counter
+channels_current = {} # Current channels gauge
+queues_current = {}
 
 
 def main():
@@ -41,14 +42,15 @@ def main():
 
 
 @manager.register_event('FullyBooted')
-def on_asterisk_FullyBooted(manager, message):
-    if message.Uptime:
-        stats.gauge('asterisk_uptime', int(message.Uptime))
-    if message.LastReload:
-        stats.gauge('asterisk_last_reload', int(message.LastReload))
+def on_asterisk_FullyBooted(manager, msg):
+    if msg.Uptime:
+        stats.gauge('asterisk_uptime', int(msg.Uptime))
+    if msg.LastReload:
+        stats.gauge('asterisk_last_reload', int(msg.LastReload))
     # Get initial channels
     ShowChannels = yield from manager.send_action({'Action': 'CoreShowChannels'})
     channels = list(filter(lambda x: x.Event == 'CoreShowChannel', ShowChannels))
+
     sip_channels = len(list(filter(lambda x: x.Channel.startswith('SIP/'), channels)))
     pjsip_channels = len(list(filter(lambda x: x.Channel.startswith('PJSIP/'), channels)))
     iax2_channels = len(list(filter(lambda x: x.Channel.startswith('IAX2/'), channels)))
@@ -65,9 +67,8 @@ def on_asterisk_FullyBooted(manager, message):
 
 
 @manager.register_event('Newchannel')
-def on_asterisk_Newchannel(manager, message):
-    m = message
-    channel=m.Channel.split('/')[0].lower()
+def on_asterisk_Newchannel(manager, msg):
+    channel=msg.Channel.split('/')[0].lower()
     stats.incr('asterisk_channels_total', tags={'channel': channel})
     if channels_current.get(channel) != None:
         channels_current[channel] += 1
@@ -79,9 +80,8 @@ def on_asterisk_Newchannel(manager, message):
 
 
 @manager.register_event('Hangup')
-def on_asterisk_Hangup(manager, message):
-    m = message
-    channel=m.Channel.split('/')[0].lower()
+def on_asterisk_Hangup(manager, msg):
+    channel=msg.Channel.split('/')[0].lower()
     if channels_current.get(channel) != None:
         channels_current[channel] -= 1
     else:
@@ -91,16 +91,25 @@ def on_asterisk_Hangup(manager, message):
                 tags={'channel':channel})
 
 
-def on_asterisk_DialBegin(manager, message):
-    print (message)
+@manager.register_event('QueueCallerJoin')
+def on_asterisk_QueueCallerJoin(manager, msg):
+    channel = ''.join(msg.Channel.split('-')[:-1])
+    logger.debug('QueueCallerJoin channel: {}, queue: {}, position: {}, count: {}'.format(channel, msg.Queue, msg.Position, msg.Count))
+    stats.incr('asterisk_queue_counter', tags={'queue':msg.Queue, 'channel':channel, 'position':msg.Position})
+    stats.gauge('asterisk_queue_status', int(msg.Count), tags={'queue':msg.Queue})
+    queues_current['msg.Queue'] = int(msg.Count)
 
 
-def on_asterisk_DialEnd(manager, message):
-    print (message)
+def on_asterisk_DialBegin(manager, msg):
+    print (msg)
 
 
-def on_asterisk_Reload(manager, message):
-    print (message)
+def on_asterisk_DialEnd(manager, msg):
+    print (msg)
+
+
+def on_asterisk_Reload(manager, msg):
+    print (msg)
 
 
 
