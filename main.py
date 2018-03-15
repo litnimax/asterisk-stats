@@ -17,16 +17,16 @@ stats = statsd.StatsClient(*STATSD_HOST.split(':'))
 
 loop = asyncio.get_event_loop()
 
+logging.basicConfig()
+logger = logging.getLogger(__name__)
+logger.setLevel(level=logging.DEBUG)
+
 # Asterisk AMI manager client
 manager = Manager(loop=loop,
                   host=AMI_HOST, port=AMI_PORT,
                   username=AMI_USER,
                   secret=AMI_SECRET)
-#manager.loop.set_debug(True)
-
-logging.basicConfig()
-logger = logging.getLogger(__name__)
-logger.setLevel(level=logging.DEBUG)
+manager.loop.set_debug(True)
 
 channels_current = {} # Current channels gauge
 queues_current = {}
@@ -91,12 +91,12 @@ def on_asterisk_Hangup(manager, msg):
                 tags={'channel':channel})
 
 
+@manager.register_event('QueueCallerLeave')
 @manager.register_event('QueueCallerJoin')
 def on_asterisk_QueueCallerJoin(manager, msg):
     channel = ''.join(msg.Channel.split('-')[:-1])
-    logger.debug('QueueCallerJoin channel: {}, queue: {}, position: {}, count: {}'.format(channel, msg.Queue, msg.Position, msg.Count))
-    stats.incr('asterisk_queue_counter', tags={'queue':msg.Queue, 'channel':channel, 'position':msg.Position})
-    stats.gauge('asterisk_queue_status', int(msg.Count), tags={'queue':msg.Queue})
+    logger.debug('event: {}, channel: {}, queue: {}, position: {}, count: {}'.format(msg.Event, channel, msg.Queue, msg.Position, msg.Count))
+    stats.gauge('asterisk_queue_callers', int(msg.Count), tags={'queue':msg.Queue})
     queues_current['msg.Queue'] = int(msg.Count)
 
 

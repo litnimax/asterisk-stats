@@ -1,0 +1,453 @@
+*CLI> <-- Examining AMI event: -->
+<-- Examining AMI event: -->
+Event: Newchannel
+Privilege: call,all
+SequenceNumber: 54744
+File: manager_channels.c
+Line: 734
+Func: channel_snapshot_update
+Channel: PJSIP/701-00000063
+ChannelState: 4
+ChannelStateDesc: Ring
+CallerIDNum: 701
+CallerIDName: LitniAlex
+ConnectedLineNum: <unknown>
+ConnectedLineName: <unknown>
+Language: ru
+AccountCode: 701
+Context: from-internal
+Exten: test
+Priority: 1
+Uniqueid: 1521091815.149
+Linkedid: 1521091815.149
+
+
+<-- Examining AMI event: -->
+Event: Newstate
+Privilege: call,all
+SequenceNumber: 54748
+File: manager_channels.c
+Line: 734
+Func: channel_snapshot_update
+Channel: PJSIP/701-00000063
+ChannelState: 6
+ChannelStateDesc: Up
+CallerIDNum: 701
+CallerIDName: LitniAlex
+ConnectedLineNum: <unknown>
+ConnectedLineName: <unknown>
+Language: ru
+AccountCode: 701
+Context: from-internal
+Exten: test
+Priority: 1
+Uniqueid: 1521091815.149
+Linkedid: 1521091815.149
+
+
+<-- Examining AMI event: -->
+Event: DeviceStateChange
+Privilege: call,all
+SequenceNumber: 54749
+File: manager.c
+Line: 1838
+Func: manager_default_msg_cb
+Device: PJSIP/701
+State: INUSE
+
+
+<-- Examining AMI event: -->
+Event: DeviceStateChange
+Privilege: call,all
+SequenceNumber: 54751
+File: manager.c
+Line: 1838
+Func: manager_default_msg_cb
+Device: Queue:q1
+State: RINGING
+
+
+<-- Examining AMI event: -->
+Event: QueueCallerJoin
+Privilege: agent,all
+SequenceNumber: 54752
+File: manager.c
+Line: 1838
+Func: manager_default_msg_cb
+Channel: PJSIP/701-00000063
+ChannelState: 6
+ChannelStateDesc: Up
+CallerIDNum: 701
+CallerIDName: LitniAlex
+ConnectedLineNum: <unknown>
+ConnectedLineName: <unknown>
+Language: ru
+AccountCode: 701
+Context: from-internal
+Exten: test
+Priority: 2
+Uniqueid: 1521091815.149
+Linkedid: 1521091815.149
+Queue: q1
+Count: 1
+Position: 1
+
+<-- Examining AMI event: -->
+Event: AgentCalled
+Privilege: agent,all
+SequenceNumber: 54762
+File: manager.c
+Line: 1838
+Func: manager_default_msg_cb
+Channel: PJSIP/701-00000063
+ChannelState: 6
+ChannelStateDesc: Up
+CallerIDNum: 701
+CallerIDName: LitniAlex
+ConnectedLineNum: <unknown>
+ConnectedLineName: <unknown>
+Language: ru
+AccountCode: 701
+Context: from-internal
+Exten: test
+Priority: 2
+Uniqueid: 1521091815.149
+Linkedid: 1521091815.149
+DestChannel: Local/waitanswer@features-00000018;1
+DestChannelState: 0
+DestChannelStateDesc: Down
+DestCallerIDNum: test
+DestCallerIDName: <unknown>
+DestConnectedLineNum: 701
+DestConnectedLineName: LitniAlex
+DestLanguage: ru
+DestAccountCode:
+DestContext: features
+DestExten: test
+DestPriority: 1
+DestUniqueid: 1521091815.150
+DestLinkedid: 1521091815.149
+MemberName: Local/waitanswer@features
+Queue: q1
+Interface: Local/waitanswer@features
+
+
+<-- Examining AMI event: -->
+Event: Newstate
+Privilege: call,all
+SequenceNumber: 54767
+File: manager_channels.c
+Line: 734
+Func: channel_snapshot_update
+Channel: Local/waitanswer@features-00000018;1
+ChannelState: 6
+ChannelStateDesc: Up
+CallerIDNum: test
+CallerIDName: <unknown>
+ConnectedLineNum: 701
+ConnectedLineName: LitniAlex
+Language: ru
+AccountCode:
+Context: features
+Exten: test
+Priority: 1
+Uniqueid: 1521091815.150
+Linkedid: 1521091815.149
+
+
+    -- Stopped music on hold on PJSIP/701-00000063
+<-- Examining AMI event: -->
+Event: DeviceStateChange
+Privilege: call,all
+SequenceNumber: 54770
+File: manager.c
+Line: 1838
+Func: manager_default_msg_cb
+Device: Local/waitanswer@features
+State: INUSE
+
+
+<-- Examining AMI event: -->
+Event: QueueMemberStatus
+Privilege: agent,all
+SequenceNumber: 54772
+File: manager.c
+Line: 1838
+Func: manager_default_msg_cb
+Queue: q1
+StateInterface: Local/waitanswer@features
+Ringinuse: 1
+MemberName: Local/waitanswer@features
+Paused: 0
+Interface: Local/waitanswer@features
+Penalty: 0
+Status: 2
+Membership: static
+CallsTaken: 6
+InCall: 0
+LastCall: 1520410533
+PausedReason:
+
+
+<-- Examining AMI event: -->
+Event: DeviceStateChange
+Privilege: call,all
+SequenceNumber: 54774
+File: manager.c
+Line: 1838
+Func: manager_default_msg_cb
+Device: Queue:q1
+State: NOT_INUSE
+
+
+<-- Examining AMI event: -->
+Event: QueueCallerLeave
+Privilege: agent,all
+SequenceNumber: 54775
+File: manager.c
+Line: 1838
+Func: manager_default_msg_cb
+Channel: PJSIP/701-00000063
+ChannelState: 6
+ChannelStateDesc: Up
+CallerIDNum: 701
+CallerIDName: LitniAlex
+ConnectedLineNum: <unknown>
+ConnectedLineName: <unknown>
+Language: ru
+AccountCode: 701
+Context: from-internal
+Exten: test
+Priority: 2
+Uniqueid: 1521091815.149
+Linkedid: 1521091815.149
+Queue: q1
+Count: 0
+Position: 1
+
+<-- Examining AMI event: -->
+Event: DeviceStateChange
+Privilege: call,all
+SequenceNumber: 54778
+File: manager.c
+Line: 1838
+Func: manager_default_msg_cb
+Device: Local/waitanswer@features
+State: INUSE
+
+
+<-- Examining AMI event: -->
+Event: QueueMemberStatus
+Privilege: agent,all
+SequenceNumber: 54779
+File: manager.c
+Line: 1838
+Func: manager_default_msg_cb
+Queue: q1
+StateInterface: Local/waitanswer@features
+Ringinuse: 1
+MemberName: Local/waitanswer@features
+Paused: 0
+Interface: Local/waitanswer@features
+Penalty: 0
+Status: 2
+Membership: static
+CallsTaken: 6
+InCall: 0
+LastCall: 1520410533
+PausedReason:
+
+
+<-- Examining AMI event: -->
+Event: AgentConnect
+Privilege: agent,all
+SequenceNumber: 54780
+File: manager.c
+Line: 1838
+Func: manager_default_msg_cb
+Channel: PJSIP/701-00000063
+ChannelState: 6
+ChannelStateDesc: Up
+CallerIDNum: 701
+CallerIDName: LitniAlex
+ConnectedLineNum: <unknown>
+ConnectedLineName: <unknown>
+Language: ru
+AccountCode: 701
+Context: from-internal
+Exten: test
+Priority: 2
+Uniqueid: 1521091815.149
+Linkedid: 1521091815.149
+DestChannel: Local/waitanswer@features-00000018;1
+DestChannelState: 6
+DestChannelStateDesc: Up
+DestCallerIDNum: test
+DestCallerIDName: <unknown>
+DestConnectedLineNum: 701
+DestConnectedLineName: LitniAlex
+DestLanguage: ru
+DestAccountCode:
+DestContext: features
+DestExten: test
+DestPriority: 1
+DestUniqueid: 1521091815.150
+DestLinkedid: 1521091815.149
+HoldTime: 3
+MemberName: Local/waitanswer@features
+Queue: q1
+Interface: Local/waitanswer@features
+RingTime: 3
+
+
+    -- Channel PJSIP/701-00000063 left 'simple_bridge' basic-bridge <543f26a9-9a2f-4b2c-bca7-812cc421c3b5>
+<-- Examining AMI event: -->
+Event: HangupRequest
+Privilege: call,all
+SequenceNumber: 54794
+File: manager_channels.c
+Line: 794
+Func: channel_hangup_request_cb
+Channel: PJSIP/701-00000063
+ChannelState: 6
+ChannelStateDesc: Up
+CallerIDNum: 701
+CallerIDName: LitniAlex
+ConnectedLineNum: <unknown>
+ConnectedLineName: <unknown>
+Language: ru
+AccountCode: 701
+Context: from-internal
+Exten: test
+Priority: 2
+Uniqueid: 1521091815.149
+Linkedid: 1521091815.149
+Cause: 16
+
+
+  == Spawn extension (from-internal, test, 2) exited non-zero on 'PJSIP/701-00000063'
+    -- Executing [h@from-internal:1] GotoIf("PJSIP/701-00000063", "?:hangup") in new stack
+    -- Goto (from-internal,h,16)
+    -- Executing [h@from-internal:16] Hangup("PJSIP/701-00000063", "") in new stack
+    -- Channel Local/waitanswer@features-00000018;1 left 'simple_bridge' basic-bridge <543f26a9-9a2f-4b2c-bca7-812cc421c3b5>
+  == Spawn extension (from-internal, h, 16) exited non-zero on 'PJSIP/701-00000063'
+
+<-- Examining AMI event: -->
+Event: AgentComplete
+Privilege: agent,all
+SequenceNumber: 54798
+File: manager.c
+Line: 1838
+Func: manager_default_msg_cb
+Channel: PJSIP/701-00000063
+ChannelState: 6
+ChannelStateDesc: Up
+CallerIDNum: 701
+CallerIDName: LitniAlex
+ConnectedLineNum: <unknown>
+ConnectedLineName: <unknown>
+Language: ru
+AccountCode: 701
+Context: from-internal
+Exten: test
+Priority: 2
+Uniqueid: 1521091815.149
+Linkedid: 1521091815.149
+DestChannel: Local/waitanswer@features-00000018;1
+DestChannelState: 6
+DestChannelStateDesc: Up
+DestCallerIDNum: test
+DestCallerIDName: <unknown>
+DestConnectedLineNum: 701
+DestConnectedLineName: LitniAlex
+DestLanguage: ru
+DestAccountCode:
+DestContext: features
+DestExten: test
+DestPriority: 1
+DestUniqueid: 1521091815.150
+DestLinkedid: 1521091815.149
+HoldTime: 3
+MemberName: Local/waitanswer@features
+Queue: q1
+Interface: Local/waitanswer@features
+TalkTime: 9
+Reason: caller
+
+
+<-- Examining AMI event: -->
+Event: DeviceStateChange
+Privilege: call,all
+SequenceNumber: 54808
+File: manager.c
+Line: 1838
+Func: manager_default_msg_cb
+Device: Local/waitanswer@features
+State: NOT_INUSE
+
+
+<-- Examining AMI event: -->
+Event: QueueMemberStatus
+Privilege: agent,all
+SequenceNumber: 54809
+File: manager.c
+Line: 1838
+Func: manager_default_msg_cb
+Queue: q1
+StateInterface: Local/waitanswer@features
+Ringinuse: 1
+MemberName: Local/waitanswer@features
+Paused: 0
+Interface: Local/waitanswer@features
+Penalty: 0
+Status: 1
+Membership: static
+CallsTaken: 7
+InCall: 0
+LastCall: 1521091827
+PausedReason:
+
+
+<-- Examining AMI event: -->
+Event: DeviceStateChange
+Privilege: call,all
+SequenceNumber: 54812
+File: manager.c
+Line: 1838
+Func: manager_default_msg_cb
+Device: Local/waitanswer@features
+State: NOT_INUSE
+
+
+<-- Examining AMI event: -->
+Event: DeviceStateChange
+Privilege: call,all
+SequenceNumber: 54813
+File: manager.c
+Line: 1838
+Func: manager_default_msg_cb
+Device: PJSIP/701
+State: NOT_INUSE
+
+
+<-- Examining AMI event: -->
+Event: QueueMemberStatus
+Privilege: agent,all
+SequenceNumber: 54814
+File: manager.c
+Line: 1838
+Func: manager_default_msg_cb
+Queue: q1
+StateInterface: Local/waitanswer@features
+Ringinuse: 1
+MemberName: Local/waitanswer@features
+Paused: 0
+Interface: Local/waitanswer@features
+Penalty: 0
+Status: 1
+Membership: static
+CallsTaken: 7
+InCall: 0
+LastCall: 1521091827
+PausedReason:
+
