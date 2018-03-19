@@ -451,3 +451,111 @@ InCall: 0
 LastCall: 1521091827
 PausedReason:
 
+
+================ ContactStatus =================
+<-- Examining AMI event: -->
+Event: ContactStatus
+Privilege: system,all
+SequenceNumber: 56660
+File: manager.c
+Line: 1838
+Func: manager_default_msg_cb
+URI: sip:701@10.2.2.2:5068;line=6099459e665a8c7
+ContactStatus: Reachable
+AOR: 701
+EndpointName: 701
+RoundtripUsec: 34955
+
+<-- Examining AMI event: -->                                                                                                                                          [0/1813]
+Event: ContactStatus
+Privilege: system,all
+SequenceNumber: 56739
+File: manager.c
+Line: 1838
+Func: manager_default_msg_cb
+URI: sip:701@62.183.125.47:19093
+ContactStatus: Unreachable
+AOR: 701
+EndpointName: 701
+RoundtripUsec: 0
+
+<-- Examining AMI event: -->
+Event: ContactStatus
+Privilege: system,all
+SequenceNumber: 56779
+File: manager.c
+Line: 1838
+Func: manager_default_msg_cb
+URI: sip:701@62.183.125.47:28818
+ContactStatus: Created
+AOR: 701
+EndpointName: 701
+RoundtripUsec: 0
+
+
+========================== PeerStatus ===================
+<-- Examining AMI event: -->
+Event: PeerStatus
+Privilege: system,all
+SequenceNumber: 56740
+File: manager.c
+Line: 1838
+Func: manager_default_msg_cb
+ChannelType: PJSIP
+Peer: PJSIP/701
+PeerStatus: Unreachable
+
+----------- chan_sip.so -----------
+<-- Examining AMI event: -->
+Event: PeerStatus.
+Privilege: system,all.
+ChannelType: SIP.
+Peer: SIP/701.
+PeerStatus: Lagged.
+
+<-- Examining AMI event: -->
+Event: PeerStatus
+Privilege: system,all
+SequenceNumber: 57191
+File: manager.c
+Line: 1838
+Func: manager_default_msg_cb
+ChannelType: SIP
+Peer: SIP/701
+PeerStatus: Reachable
+
+======================  DeviceStateChange =============
+<-- Examining AMI event: -->
+Event: DeviceStateChange
+Privilege: call,all
+SequenceNumber: 56741
+File: manager.c
+Line: 1838
+Func: manager_default_msg_cb
+Device: PJSIP/701
+State: UNAVAILABLE
+
+<-- Examining AMI event: -->
+Event: DeviceStateChange
+Privilege: call,all
+SequenceNumber: 56781
+File: manager.c
+Line: 1838
+Func: manager_default_msg_cb
+Device: PJSIP/701
+State: NOT_INUSE
+
+
+================= Registry =============================
+<-- Examining AMI event: -->
+Event: Registry
+Privilege: system,all
+SequenceNumber: 56706
+File: manager.c
+Line: 1838
+Func: manager_default_msg_cb
+ChannelType: PJSIP
+Username: sip:79267128579@multifon.ru
+Domain: sip:multifon.ru
+Status: Registered
+

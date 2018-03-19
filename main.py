@@ -99,6 +99,11 @@ def on_asterisk_QueueCallerJoin(manager, msg):
     stats.gauge('asterisk_queue_callers', int(msg.Count), tags={'queue':msg.Queue})
     queues_current['msg.Queue'] = int(msg.Count)
 
+@manager.register_event('ContactStatus')
+def on_asterisk_ContactStatus(manager, msg):
+    if msg.ContactStatus == 'Reachable':
+        logger.debug('event: {}, peer: {}, qualify: {}'.format(msg.Event, msg.EndpointName, msg.RoundtripUsec))
+        stats.gauge('asterisk_peer_qualify_seconds', float(msg.RoundtripUsec)/1000000, tags={'peer':msg.EndpointName})
 
 def on_asterisk_DialBegin(manager, msg):
     print (msg)
