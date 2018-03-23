@@ -497,6 +497,18 @@ RoundtripUsec: 0
 <-- Examining AMI event: -->
 Event: PeerStatus
 Privilege: system,all
+SequenceNumber: 5545
+File: manager.c
+Line: 1838
+Func: manager_default_msg_cb
+ChannelType: PJSIP
+Peer: PJSIP/701
+PeerStatus: Reachable
+
+  == Endpoint 701 is now Unreachable
+<-- Examining AMI event: -->
+Event: PeerStatus
+Privilege: system,all
 SequenceNumber: 56740
 File: manager.c
 Line: 1838
@@ -506,12 +518,13 @@ Peer: PJSIP/701
 PeerStatus: Unreachable
 
 ----------- chan_sip.so -----------
-<-- Examining AMI event: -->
 Event: PeerStatus.
 Privilege: system,all.
 ChannelType: SIP.
 Peer: SIP/701.
-PeerStatus: Lagged.
+PeerStatus: Registered.
+Address: 10.2.2.2:5068.
+.
 
 <-- Examining AMI event: -->
 Event: PeerStatus
@@ -523,6 +536,25 @@ Func: manager_default_msg_cb
 ChannelType: SIP
 Peer: SIP/701
 PeerStatus: Reachable
+
+<-- Examining AMI event: -->
+Event: PeerStatus.
+Privilege: system,all.
+ChannelType: SIP.
+Peer: SIP/701.
+PeerStatus: Lagged.
+
+<-- Examining AMI event: -->
+Event: PeerStatus
+Privilege: system,all
+SequenceNumber: 97
+File: manager.c
+Line: 1838
+Func: manager_default_msg_cb
+ChannelType: SIP
+Peer: SIP/701
+PeerStatus: Unregistered
+Cause: Expired
 
 ======================  DeviceStateChange =============
 <-- Examining AMI event: -->

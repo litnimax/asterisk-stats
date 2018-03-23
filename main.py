@@ -29,8 +29,7 @@ manager = Manager(loop=loop,
 manager.loop.set_debug(True)
 
 channels_current = {} # Current channels gauge
-queues_current = {}
-
+sip_reachable_peers = set()
 
 def main():
     logger.info('Connecting to {}:{}.'.format(AMI_HOST, AMI_PORT))
@@ -97,14 +96,29 @@ def on_asterisk_QueueCallerJoin(manager, msg):
     channel = ''.join(msg.Channel.split('-')[:-1])
     logger.debug('event: {}, channel: {}, queue: {}, position: {}, count: {}'.format(msg.Event, channel, msg.Queue, msg.Position, msg.Count))
     stats.gauge('asterisk_queue_callers', int(msg.Count), tags={'queue':msg.Queue})
-    queues_current['msg.Queue'] = int(msg.Count)
 
 @manager.register_event('ContactStatus')
 def on_asterisk_ContactStatus(manager, msg):
     if msg.ContactStatus == 'Reachable':
-        logger.debug('event: {}, peer: {}, qualify: {}'.format(msg.Event, msg.EndpointName, msg.RoundtripUsec))
+        logger.debug('event: {}, status: {}, peer: {}, qualify: {}'.format(msg.Event, msg.ContactStatus, msg.EndpointName, msg.RoundtripUsec))
         stats.gauge('asterisk_peer_qualify_seconds', float(msg.RoundtripUsec)/1000000, tags={'peer':msg.EndpointName})
+        sip_reachable_peers.add('PJSIP/'+msg.EndpointName)
+    elif msg.ContactStatus == 'Unreachable':
+        logger.debug('event: {}, status: {}, peer: {}, qualify: {}'.format(msg.Event, msg.ContactStatus, msg.EndpointName, msg.RoundtripUsec))
+        #stats.gauge('asterisk_peer_qualify_seconds', float(msg.RoundtripUsec)/1000000, tags={'peer':msg.EndpointName})
+        sip_reachable_peers.discard('PJSIP/'+msg.EndpointName)
 
+
+@manager.register_event('PeerStatus')
+def on_asterisk_PeerStatus(manager, msg):
+    if msg.PeerStatus in ['Reachable', 'Registered']:
+        sip_reachable_peers.add(msg.Peer)
+    elif msg.PeerStatus in ['Unreachable', 'Unregistered']:
+        sip_reachable_peers.discard(msg.Peer)
+    logger.debug('event: {}, peer: {}, status: {}'.format(msg.Event, msg.Peer, msg.PeerStatus))
+    stats.gauge('asterisk_sip_reachable_peers', len(sip_reachable_peers))
+
+    
 def on_asterisk_DialBegin(manager, msg):
     print (msg)
 
